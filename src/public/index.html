@@ -1,3 +1,30 @@
 <html>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+	const socket = io();
+	function sendMsg(){
+		const message = document.getElementById("MSG").value;
+		if (message != "") {
+			socket.send(JSON.stringify({sender:"JoonWoo", text:message}));
+		}
+	}
+</script>
+	
 Main Page
+<textarea id="MSG" rows="5" cols="25"></textarea>
+<button onclick="sendMsg()">SEND</button>
+<script>
+	socket.on('newMessage',messageNum=>{
+		console.log('You got new Message');
+		socket.emit('ready',JSON.stringify({langCode : 'en', msgNum : messageNum}));
+	});
+	
+	socket.on('message',data=>{
+		data = JSON.parse(data);
+		console.log(`${data.sender} => ${data.originalText}`);
+		if(data.translatedText != null){
+			console.log(`=> ${data.translatedText}`);
+		}
+	});
+</script>
 </html>
