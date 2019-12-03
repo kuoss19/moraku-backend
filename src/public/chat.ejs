@@ -1,24 +1,24 @@
 <html>
 
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<link rel="shortcut icon" href="#" />
+	<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+	<link rel='shortcut icon' href='#' />
 	<title>Moraku - Chat Room</title>
-	<script src="/socket.io/socket.io.js"></script>
+	<script src='/socket.io/socket.io.js'></script>
 	<script>
 		const socket = io();
 		let xhr = new XMLHttpRequest();
-		xhr.open("post", "/translate", true);
+		xhr.open('post', '/translate', true);
 		xhr.onreadystatechange = () => { //폴백
 			if (xhr.readyState == 4) {
 				if (xhr.status == 200) { //200은 잘넘어왔단 것이다.
 					process();
 				} else {
-					alert("요청오류 : " + xhr.status);
+					alert('요청오류 : ' + xhr.status);
 				}
 			}
 		};
-		xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+		xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 
 		function process() {
 			const data = JSON.parse(xhr.response);
@@ -26,9 +26,9 @@
 		}
 
 		function sendMsg() {
-			const message = document.getElementById("MSG").value;
+			const message = document.getElementById('MSG').value;
 			if (message != "") {
-				socket.send(JSON.stringify({ sender: "JoonWoo", text: message }));
+				socket.send(JSON.stringify({ sender: 'JoonWoo', text: message }));
 			}
 		}
 
@@ -36,9 +36,12 @@
 			data = JSON.parse(data);
 			if (data.sender === null) {
 				console.log(data.text);
+			} else if (data.source === 'en') { // 내프로필 언어랑 겹치면 미번역
+				console.log(`${data.sender} => ${data.text}`);
 			} else {
 				console.log(`${data.sender} => ${data.text}`);
-				xhr.send(JSON.stringify({ "langCode": "en", "textToTranslate": data.text }));
+				xhr.send(JSON.stringify({ 'source': data.source, 'target': 'en', 'text': data.text }));
+				// target에 내 언어코드넣기
 			}
 		});
 	</script>

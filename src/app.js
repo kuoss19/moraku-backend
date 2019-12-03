@@ -44,8 +44,8 @@ app.use((err, req, res) => {
 
 const server = http.createServer(app);
 const io = socketio(server);
-socketHandler(io);
 const port = process.env.PORT || 4000;
+socketHandler(io, port);
 
 server.listen(port);
 // eslint-disable-next-line no-console
