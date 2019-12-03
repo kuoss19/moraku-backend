@@ -1,0 +1,38 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="shortcut icon" href="#" />
+	<title>Moraku - Chat Room</title>
+</head>
+
+<body>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		const socket = io();
+		function sendMsg(){
+			const message = document.getElementById("MSG").value;
+			if (message != "") {
+				socket.send(JSON.stringify({sender:"JoonWoo", text:message}));
+			}
+		}
+	</script>
+	
+	Chat Page<br>
+	<textarea id="MSG" rows="5" cols="25"></textarea><br>
+	<button onclick="sendMsg()">SEND</button>
+	<script>
+		socket.on('newMessage',messageNum=>{
+			console.log('You got new Message');
+			socket.emit('ready',JSON.stringify({langCode : 'en', msgID : messageNum}));// My langCode
+		});
+		
+		socket.on('message',data=>{
+			data = JSON.parse(data);
+			console.log(`${data.sender} => ${data.originalText}`);
+			if(data.translatedText != null){
+				console.log(`=> ${data.translatedText}`);
+			}
+		});
+	</script>
+</body>
+</html>

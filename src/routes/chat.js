@@ -4,7 +4,7 @@ const router = express.Router();
 
 /* GET home page. */
 router.get('/', (req, res) => {
-  res.render('index', { title: 'Moraku' });
+  res.render('chat', { title: 'Moraku - Chat Room' });
 });
 
 module.exports = router;
