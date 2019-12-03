@@ -19,9 +19,9 @@ router.post('/', async (req, res) => {
     form: { query: textToTranslate },
     headers: {
       'X-Naver-Client-Id': clientId,
-      'X-Naver-Client-Secret': clientSecret
+      'X-Naver-Client-Secret': clientSecret,
     },
-    json: true
+    json: true,
   };
 
   let result;
@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
   options.form = {
     source: result,
     target: langCode,
-    text: textToTranslate
+    text: textToTranslate,
   };
 
   try {
@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
     res.status(200);
     res.json({
       status: 200,
-      translatedText: transResult.message.result.translatedText
+      translatedText: transResult.message.result.translatedText,
     });
   } catch (e) {
     res.status(500);
