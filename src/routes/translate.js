@@ -1,8 +1,8 @@
 const express = require('express');
 const request = require('request-promise-native');
 
-const client_id = '2nTku5e6Eal6QARD_RVh'; // 이준우꺼
-const client_secret = '0hpWMiFf2p';
+const clientId = '2nTku5e6Eal6QARD_RVh'; // 이준우꺼
+const clientSecret = '0hpWMiFf2p';
 
 const router = express.Router();
 
@@ -18,8 +18,8 @@ router.post('/', async (req, res) => {
     url: 'https://openapi.naver.com/v1/papago/detectLangs',
     form: { query: textToTranslate },
     headers: {
-      'X-Naver-Client-Id': client_id,
-      'X-Naver-Client-Secret': client_secret
+      'X-Naver-Client-Id': clientId,
+      'X-Naver-Client-Secret': clientSecret
     },
     json: true
   };
@@ -29,7 +29,6 @@ router.post('/', async (req, res) => {
     result = await request(options);
     result = result.langCode; // 이게 언어감지결과
   } catch (e) {
-    console.log(e);
     res.status(500);
     res.json({ status: 500 });
     return;
