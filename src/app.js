@@ -14,6 +14,7 @@ const app = express();
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const chatRouter = require('./routes/chat');
+const translateRouter = require('./routes/translate');
 
 app.set('views', path.join(__dirname, 'public'));
 app.set('view engine', 'ejs');
@@ -28,6 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/chat', chatRouter);
+app.use('/translate', translateRouter);
 
 // error handler
 app.use((err, req, res) => {

@@ -1,38 +1,53 @@
 <html>
+
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link rel="shortcut icon" href="#" />
 	<title>Moraku - Chat Room</title>
-</head>
-
-<body>
 	<script src="/socket.io/socket.io.js"></script>
 	<script>
 		const socket = io();
-		function sendMsg(){
+		let xhr = new XMLHttpRequest();
+		xhr.open("post", "/translate", true);
+		xhr.onreadystatechange = () => { //폴백
+			if (xhr.readyState == 4) {
+				if (xhr.status == 200) { //200은 잘넘어왔단 것이다.
+					process();
+				} else {
+					alert("요청오류 : " + xhr.status);
+				}
+			}
+		};
+		xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+
+		function process() {
+			const data = JSON.parse(xhr.response);
+			console.log(`=> ${data.translatedText}`);
+		}
+
+		function sendMsg() {
 			const message = document.getElementById("MSG").value;
 			if (message != "") {
-				socket.send(JSON.stringify({sender:"JoonWoo", text:message}));
+				socket.send(JSON.stringify({ sender: "JoonWoo", text: message }));
 			}
 		}
+
+		socket.on('message', data => {
+			data = JSON.parse(data);
+			if (data.sender === null) {
+				console.log(data.text);
+			} else {
+				console.log(`${data.sender} => ${data.text}`);
+				xhr.send(JSON.stringify({ "langCode": "en", "textToTranslate": data.text }));
+			}
+		});
 	</script>
-	
+</head>
+
+<body>
 	Chat Page<br>
 	<textarea id="MSG" rows="5" cols="25"></textarea><br>
 	<button onclick="sendMsg()">SEND</button>
-	<script>
-		socket.on('newMessage',messageNum=>{
-			console.log('You got new Message');
-			socket.emit('ready',JSON.stringify({langCode : 'en', msgID : messageNum}));// My langCode
-		});
-		
-		socket.on('message',data=>{
-			data = JSON.parse(data);
-			console.log(`${data.sender} => ${data.originalText}`);
-			if(data.translatedText != null){
-				console.log(`=> ${data.translatedText}`);
-			}
-		});
-	</script>
 </body>
+
 </html>
