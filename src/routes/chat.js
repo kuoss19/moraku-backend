@@ -1,10 +1,10 @@
-const express = require('express');
+const express = require("express");
 
 const router = express.Router();
 
-/* GET home page. */
-router.get('/', (req, res) => {
-  res.render('chat', { title: 'Moraku - Chat Room' });
+/* GET chat page. */
+router.get("/", (req, res) => {
+  res.render("chat", { title: "Moraku - Chat Room" });
 });
 
 module.exports = router;
