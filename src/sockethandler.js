@@ -31,7 +31,7 @@ function setHandler(io, port) {
       );
     });
 
-    io.send(
+    socket.broadcast.send(
       JSON.stringify({ sender: null, text: 'New Person Entered the Chat Room' }),
     );
   });
