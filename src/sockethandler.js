@@ -1,10 +1,12 @@
+const qs = require('qs');
 const request = require('request-promise-native');
 
-function setHandler(io, port) {
+function socketHandler(io, port) {
+  const users = new Map();
+
   io.on('connection', (socket) => {
-    socket.on('message', async (jsonData) => {
+    socket.on('message', async (data) => {
       // Client socket.send 요청 (인자 : JSON { sender, text })
-      const data = JSON.parse(jsonData);
 
       const options = {
         method: 'get',
@@ -21,20 +23,26 @@ function setHandler(io, port) {
       } catch (e) {
         data.source = null;
       }
-      socket.broadcast.send(JSON.stringify(data));
+      socket.broadcast.send(data);
       // 새로온 메세지 모두에게 전달(인자 : JSON { sender, text, source })
     });
 
     socket.on('disconnect', () => {
+      users.delete(socket.id);
       io.send(
         JSON.stringify({ sender: null, text: 'Someone Left the Chat Room' }),
       );
     });
 
-    socket.broadcast.send(
-      JSON.stringify({ sender: null, text: 'New Person Entered the Chat Room' }),
-    );
+    // eslint-disable-next-line
+    socket.emit('connected', Object.values(Object.fromEntries(users)));
+
+    const { id, request: connectionRequest } = socket;
+    const query = qs.parse(connectionRequest.url.split('?')[1]);
+    users.set(id, { id, ...query });
+
+    socket.broadcast.emit('hello', users.get(id));
   });
 }
 
-module.exports = setHandler;
+module.exports = socketHandler;

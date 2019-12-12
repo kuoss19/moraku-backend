@@ -1,8 +1,8 @@
 const express = require('express');
 const request = require('request-promise-native');
 
-const clientId = '2nTku5e6Eal6QARD_RVh'; // 이준우꺼
-const clientSecret = '0hpWMiFf2p';
+const clientId = process.env.NAVER_API_CLIENT_ID;
+const clientSecret = process.env.NAVER_API_CLIENT_SECRET;
 
 const router = express.Router();
 

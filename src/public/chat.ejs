@@ -1,69 +1,69 @@
 <html>
 
-<head>
-  <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
-  <link rel='shortcut icon' href='#' />
-  <title>Moraku - Chat Room</title>
-  <script src='/socket.io/socket.io.js'></script>
-  <script>
-    const socket = io();
+  <head>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+    <link rel='shortcut icon' href='#' />
+    <title>Moraku - Chat Room</title>
+    <script src='/socket.io/socket.io.js'></script>
+    <script>
+      const socket = io();
 
-    const inputTag = `<input type='text' style='width:435px; height:50px' id='MSG'>`;
+      const inputTag = `<input type='text' style='width:435px; height:50px' id='MSG'>`;
 
-    let xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = () => { //폴백
-      if (xhr.readyState == 4) {
-        if (xhr.status == 200) { //200은 잘넘어왔단 것이다.
-          process();
-        } else {
-          alert('요청오류 : ' + xhr.status);
+      let xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = () => { //폴백
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) { //200은 잘넘어왔단 것이다.
+            process();
+          } else {
+            alert('요청오류 : ' + xhr.status);
+          }
         }
-      }
-    };
-    function process() {
-      const data = JSON.parse(xhr.response);
-      addMsg(`=> ${data.translatedText}`);
-    }
-
-    function addMsg(text) {
-      const ele = document.getElementById('received');
-      ele.innerHTML += `${text}\n`;
-    }
-
-    function sendMsg() {
-      const message = document.getElementById('MSG').value;
-      if (message != "") {
-        socket.send(JSON.stringify({ sender: 'JoonWoo', text: message }));
+      };
+      function process() {
+        const data = JSON.parse(xhr.response);
+        addMsg(`=> ${data.translatedText}`);
       }
 
-      const ele = document.getElementById('sending');
-      ele.innerHTML = inputTag; // inputTag 비우기
-    }
-
-    socket.on('message', data => {
-      data = JSON.parse(data);
-      if (data.sender === null) {
-        addMsg(data.text);
-      } else if (data.source === 'en') { // 내프로필 언어랑 겹치면 미번역
-        addMsg(`${data.sender} => ${data.text} `);
-      } else {
-        addMsg(`${data.sender} => ${data.text}`);
-        xhr.open('post', '/translate', true);
-        xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-        xhr.send(JSON.stringify({ 'source': data.source, 'target': 'en', 'text': data.text }));
-        // target에 내 언어코드넣기
+      function addMsg(text) {
+        const ele = document.getElementById('received');
+        ele.innerHTML += `${text}\n`;
       }
-    });
-  </script>
-</head>
 
-<body>
-  Chat Page<br>
-  <textarea rows='28' cols='70' id='received' readonly></textarea><br>
-  <div id='sending'>
-    <input type='text' style='width:480px; height:50px' id='MSG'>
-  </div>
-  <button onclick='sendMsg()'>전송</button>
-</body>
+      function sendMsg() {
+        const message = document.getElementById('MSG').value;
+        if (message != "") {
+          socket.send(JSON.stringify({ sender: 'JoonWoo', text: message }));
+        }
+
+        const ele = document.getElementById('sending');
+        ele.innerHTML = inputTag; // inputTag 비우기
+      }
+
+      socket.on('message', data => {
+        data = JSON.parse(data);
+        if (data.sender === null) {
+          addMsg(data.text);
+        } else if (data.source === 'en') { // 내프로필 언어랑 겹치면 미번역
+          addMsg(`${data.sender} => ${data.text} `);
+        } else {
+          addMsg(`${data.sender} => ${data.text}`);
+          xhr.open('post', '/translate', true);
+          xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+          xhr.send(JSON.stringify({ 'source': data.source, 'target': 'en', 'text': data.text }));
+          // target에 내 언어코드넣기
+        }
+      });
+    </script>
+  </head>
+
+  <body>
+    Chat Page<br>
+    <textarea rows='28' cols='70' id='received' readonly></textarea><br>
+    <div id='sending'>
+      <input type='text' style='width:480px; height:50px' id='MSG'>
+    </div>
+    <button onclick='sendMsg()'>전송</button>
+  </body>
 
 </html>

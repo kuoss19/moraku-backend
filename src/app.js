@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const http = require('http');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -6,7 +7,7 @@ const logger = require('morgan');
 
 const ejs = require('ejs');
 
-const socketio = require('socket.io');
+const socketIO = require('socket.io');
 const socketHandler = require('./sockethandler');
 
 const app = express();
@@ -16,10 +17,13 @@ const usersRouter = require('./routes/users');
 const chatRouter = require('./routes/chat');
 const translateRouter = require('./routes/translate');
 
+require('dotenv').config();
+
 app.set('views', path.join(__dirname, 'public'));
 app.set('view engine', 'ejs');
 app.engine('html', ejs.renderFile);
 
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -43,7 +47,7 @@ app.use((err, req, res) => {
 });
 
 const server = http.createServer(app);
-const io = socketio(server);
+const io = socketIO(server);
 const port = process.env.PORT || 4000;
 socketHandler(io, port);
 
