@@ -2,9 +2,9 @@ const express = require('express');
 
 const router = express.Router();
 
-/* GET home page. */
+/* GET chat page. */
 router.get('/', (req, res) => {
-  res.render('index', { title: 'Moraku' });
+  res.render('chat', { title: 'Moraku - Chat Room' });
 });
 
 module.exports = router;
